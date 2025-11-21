@@ -44,16 +44,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ExpenseTrackerScreen(onExpenseClick: (String) -> Unit) {
-    val viewModel: ExpenseViewModel = viewModel()
-    val expenses by viewModel.expenses.collectAsState()
+    val vm: ExpenseViewModel = viewModel()
+    val expenses by vm.expenses.collectAsState()
     
     // stat for inpt fields
-    var expenseName by remember { mutableStateOf("") }
-    var expenseAmount by remember { mutableStateOf("") }
+    var expenName by remember { mutableStateOf("") }
+    var expenAmount by remember { mutableStateOf("") }
     
     // stat for date selctr
     var selectedDate by remember { mutableStateOf(getCurrentDate()) }
-    var showCalendar by remember { mutableStateOf(false) }
+    //var showCalendar by remember { mutableStateOf(false) }
     
     Column(
         modifier = Modifier
@@ -63,9 +63,9 @@ fun ExpenseTrackerScreen(onExpenseClick: (String) -> Unit) {
     ) {
         // inpt field for expens name
         OutlinedTextField(
-            value = expenseName,
-            onValueChange = { expenseName = it },
-            label = { Text("Expense 1") },
+            value = expenName,
+            onValueChange = { expenName = it },
+            label = { Text("Enter Expense Name") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
@@ -77,9 +77,9 @@ fun ExpenseTrackerScreen(onExpenseClick: (String) -> Unit) {
         
         // inpt field for expens amout
         OutlinedTextField(
-            value = expenseAmount,
-            onValueChange = { expenseAmount = it },
-            label = { Text("100") },
+            value = expenAmount,
+            onValueChange = { expenAmount = it },
+            label = { Text("Enter Expense Amount") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
@@ -128,27 +128,11 @@ fun ExpenseTrackerScreen(onExpenseClick: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // ad buton
-            Button(
-                onClick = {
-                    if (expenseName.isNotBlank() && expenseAmount.isNotBlank()) {
-                        val amount = expenseAmount.toDoubleOrNull() ?: 0.0
-                        viewModel.addExpense(expenseName, amount, selectedDate)
-                        expenseName = ""
-                        expenseAmount = ""
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5A7FD9)),
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Text("Add", fontSize = 16.sp)
-            }
             
             // filtr buton
             Button(
                 onClick = {
-                    viewModel.filterByDate(selectedDate)
+                    vm.filterByDate(selectedDate)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6750A4)),
                 modifier = Modifier.weight(1f),
@@ -156,11 +140,28 @@ fun ExpenseTrackerScreen(onExpenseClick: (String) -> Unit) {
             ) {
                 Text("Filter", fontSize = 16.sp)
             }
-            
-            // show all buton
+
+            // add buton
             Button(
                 onClick = {
-                    viewModel.showAllExpenses()
+                    if (expenName.isNotBlank() && expenAmount.isNotBlank()) {
+                        val amountofexpense = expenAmount.toDoubleOrNull() ?: 0.0
+                        vm.addExpense(expenName, amountofexpense, selectedDate)
+                        expenAmount = ""
+                        expenName = ""
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6750A4)),
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Text("Add", fontSize = 16.sp)
+            }
+
+            // showall buton
+            Button(
+                onClick = {
+                    vm.showAllExpenses()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6750A4)),
                 modifier = Modifier.weight(1f),
